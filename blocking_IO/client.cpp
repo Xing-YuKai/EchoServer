@@ -13,7 +13,6 @@ void echo_cli(int sockfd);
 
 int main(int argc, char *argv[])
 {
-
 	char *ip_addr;
 	int sockfd;
 	sockaddr_in servaddr{};
