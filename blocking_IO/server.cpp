@@ -53,10 +53,13 @@ int main(int argc, char const *argv[])
 		{
 			printf("accept connfd: %s:%d\n", inet_ntoa(peer_addr.sin_addr), ntohs(peer_addr.sin_port));
 		}
-
-		echo_serv(connfd);
-
-		close(connfd);
+		if (fork() == 0)
+		{
+			close(listenfd);
+			echo_serv(connfd);
+			close(connfd);
+			return 0;
+		}
 	}
 }
 
