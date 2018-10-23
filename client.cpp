@@ -60,7 +60,9 @@ void echo_cli(int sockfd)
 	{
 		printf("sent msg:%s\n", buffer);
 		write(sockfd, buffer, strlen(buffer));
+		
 		memset(buffer, 0, sizeof(buffer));
+		
 		read(sockfd, buffer, BUFFER_SIZE);
 		printf("read msg:%s\n", buffer);
 	}
