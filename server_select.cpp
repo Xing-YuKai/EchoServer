@@ -40,6 +40,8 @@ int main(int argc, char const *argv[])
 	{
 		fd_set tmp_set = read_set;
 		n_ready = select(maxfd + 1, &tmp_set, NULL, NULL, NULL);
+		if(n_ready == -1 && errno == EINTR)
+			continue;
 		if (FD_ISSET(listenfd, &tmp_set) && (!client_overflow))            /*handle new connection*/
 		{
 			connfd = accept(listenfd, (sockaddr *) &peer_addr, &peer_len);
@@ -70,7 +72,7 @@ int main(int argc, char const *argv[])
 				continue;
 			if (FD_ISSET(sockfd, &tmp_set))
 			{
-				if ((n_read = read(sockfd, buffer, BUFFER_SIZE)) == 0)
+				if ((n_read = read(sockfd, buffer, BUFFER_SIZE)) <= 0)
 				{
 					close(sockfd);
 					FD_CLR(sockfd, &read_set);

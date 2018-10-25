@@ -37,6 +37,8 @@ int main(int argc, char const *argv[])
 	while (true)
 	{
 		n_ready = poll(client, max_client, -1);
+		if(n_ready == -1 && errno == EINTR)
+			continue;
 		if (client[0].revents & POLLRDNORM)            /*handle new connection*/
 		{
 			connfd = accept(listenfd, (sockaddr *) &peer_addr, &peer_len);
@@ -63,19 +65,8 @@ int main(int argc, char const *argv[])
 			if (client[i].revents & (POLLRDNORM | POLLERR))
 			{
 				n_read = read(sockfd, buffer, BUFFER_SIZE);
-				if (n_read < 0)
-				{
-					if(errno == ECONNRESET)
-					{
-						close(sockfd);
-						client[i].fd = -1;
-					}else
-					{
-						printf("read error\n");
-						return -1;
-					}
-				}
-				if(n_read == 0)
+				
+				if(n_read <= 0)
 				{
 					close(sockfd);
 					client[i].fd = -1;
